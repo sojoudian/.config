@@ -19,6 +19,9 @@ require 'packer'.startup(function(use)
     run = ':TSUpdate'
   }
 
+  -- Dockerfile Syntax Highlighting and Formatter
+  use 'ekalinin/Dockerfile.vim'        -- Dockerfile syntax support
+
   -- Linters and Formatters
   use 'jose-elias-alvarez/null-ls.nvim' -- Linters and formatters
   use 'jayp0521/mason-null-ls.nvim'     -- Integrates with mason
@@ -50,7 +53,7 @@ end)
 require("mason").setup()
 require("mason-lspconfig").setup({
   ensure_installed = {
-    "gopls", "rust_analyzer", "pyright", "html", "cssls", "ts_ls",   -- Replaced tsserver with ts_ls
+    "dockerls", "gopls", "rust_analyzer", "pyright", "html", "cssls", "ts_ls",
     "bashls", "ansiblels", "terraformls"
   }
 })
@@ -69,7 +72,7 @@ local on_attach = function(_, bufnr)
 end
 
 -- Enable LSP servers
-local servers = { "gopls", "rust_analyzer", "pyright", "html", "cssls", "ts_ls", "bashls", "ansiblels", "terraformls" }
+local servers = { "dockerls", "gopls", "rust_analyzer", "pyright", "html", "cssls", "ts_ls", "bashls", "ansiblels", "terraformls" }
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
     on_attach = on_attach,
@@ -119,7 +122,7 @@ cmp.setup({
 
 -- Treesitter Configuration
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = { "go", "rust", "python", "html", "css", "javascript", "bash", "terraform", "yaml" },
+  ensure_installed = { "dockerfile", "go", "rust", "python", "html", "css", "javascript", "bash", "terraform", "yaml" },
   highlight = {
     enable = true,
   },
@@ -136,6 +139,7 @@ null_ls.setup({
     null_ls.builtins.formatting.rustfmt,
     null_ls.builtins.formatting.black,
     null_ls.builtins.diagnostics.shellcheck,
+    null_ls.builtins.diagnostics.hadolint -- Use hadolint for Dockerfiles
   },
 })
 
