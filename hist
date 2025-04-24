@@ -6,3 +6,13 @@ ffmpeg -i "input.mp4" -ss 00:00:05 -to 00:03:06 -c:v copy -c:a copy "output.mp4"
 
 docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t maziar/myapp:latest --push .
 docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t maziar/cloud_portfolio:0.3 --push .
+
+brew install node        # Needed by pyright, cssls, tsserver, etc.
+brew install go          # Needed by gopls
+brew install rust        # Needed by rust_analyzer
+brew install python      # Needed by black (formatter for null-ls)
+brew install shellcheck  # Used by null-ls for shell scripts
+brew install hadolint    # Dockerfile linter for null-ls
+brew install ansible     # Needed by ansiblels
+brew install terraform   # Needed by terraformls
+
