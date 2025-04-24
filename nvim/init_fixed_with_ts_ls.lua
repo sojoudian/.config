@@ -161,21 +161,6 @@ local shellcheck = h.make_builtin({
 local diagnostics = null_ls.builtins.diagnostics
 local formatting = null_ls.builtins.formatting
 
-local h = require("null-ls.helpers")
-local h = require("null-ls.helpers")
-
-local rustfmt = h.make_builtin({
-  name = "rustfmt",
-  method = require("null-ls").methods.FORMATTING,
-  filetypes = { "rust" },
-  generator_opts = {
-    command = "/opt/homebrew/bin/rustfmt",
-    args = {},
-    to_stdin = true,
-  },
-  factory = h.generator_factory,
-})
-
 null_ls.setup({
   sources = {
     shellcheck,
@@ -184,7 +169,7 @@ null_ls.setup({
       filetypes = { "html", "css", "javascript" },
     }),
     formatting.gofmt,
-    rustfmt,
+    formatting.rustfmt,
     formatting.black,
   },
 })

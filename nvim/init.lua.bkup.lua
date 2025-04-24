@@ -1,4 +1,3 @@
-
 -- Packer for managing plugins
 require 'packer'.startup(function(use)
   use 'wbthomason/packer.nvim'         -- Packer itself
@@ -24,8 +23,10 @@ require 'packer'.startup(function(use)
   use 'ekalinin/Dockerfile.vim'        -- Dockerfile syntax support
 
   -- Linters and Formatters
-  use 'nvimtools/none-ls.nvim'         -- Linters and formatters
-  use 'jayp0521/mason-null-ls.nvim'    -- Integrates with mason
+  -- use 'jose-elias-alvarez/null-ls.nvim' -- Linters and formatters
+  --  use '/Users/maziar/.config/dev/nvim-plugins/none-ls.nvim/'     -- Linters and formatters
+  use 'nvimtools/none-ls.nvim'
+  use 'jayp0521/mason-null-ls.nvim'     -- Integrates with mason
 
   -- Auto-pairs for automatic closing brackets
   use 'windwp/nvim-autopairs'
@@ -56,6 +57,7 @@ vim.env.PATH = table.concat({
   "/usr/local/bin",
 }, ":")
 
+
 -- Mason setup for managing LSPs, linters, and formatters
 require("mason").setup()
 require("mason-lspconfig").setup({
@@ -78,6 +80,7 @@ local on_attach = function(_, bufnr)
   buf_set_keymap('n', 'gr', '<Cmd>lua vim.lsp.buf.references()<CR>', opts)
 end
 
+-- Enable LSP servers
 local servers = { "dockerls", "gopls", "rust_analyzer", "pyright", "html", "cssls", "ts_ls", "bashls", "ansiblels", "terraformls" }
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
@@ -106,6 +109,7 @@ cmp.setup({
         fallback()
       end
     end, { 'i', 's' }),
+
     ['<S-Tab>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_prev_item()
@@ -115,7 +119,8 @@ cmp.setup({
         fallback()
       end
     end, { 'i', 's' }),
-    ['<C-y>'] = cmp.mapping.confirm({ select = true }),
+
+    ['<C-y>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item
     ['<C-e>'] = cmp.mapping.close(),
   },
   sources = {
@@ -134,60 +139,24 @@ require'nvim-treesitter.configs'.setup {
 
 -- Null-ls setup for formatting and linting
 local null_ls = require("null-ls")
-local h = require("null-ls.helpers")
-
-local shellcheck = h.make_builtin({
-  name = "shellcheck",
-  method = null_ls.methods.DIAGNOSTICS,
-  filetypes = { "sh" },
-  generator_opts = {
-    command = "/opt/homebrew/bin/shellcheck",
-    args = { "--format", "json1", "-" },
-    to_stdin = true,
-    from_stderr = false,
-    format = "json",
-    on_output = h.diagnostics.from_json({
-      severities = {
-        error = 1,
-        warning = 2,
-        info = 3,
-        style = 4,
-      },
-    }),
-  },
-  factory = h.generator_factory,
-})
-
 local diagnostics = null_ls.builtins.diagnostics
 local formatting = null_ls.builtins.formatting
 
-local h = require("null-ls.helpers")
-local h = require("null-ls.helpers")
-
-local rustfmt = h.make_builtin({
-  name = "rustfmt",
-  method = require("null-ls").methods.FORMATTING,
-  filetypes = { "rust" },
-  generator_opts = {
-    command = "/opt/homebrew/bin/rustfmt",
-    args = {},
-    to_stdin = true,
-  },
-  factory = h.generator_factory,
-})
-
 null_ls.setup({
   sources = {
-    shellcheck,
+    diagnostics.shellcheck.with({
+      command = "/opt/homebrew/bin/shellcheck",
+    }),
     diagnostics.hadolint,
     formatting.prettier.with({
       filetypes = { "html", "css", "javascript" },
     }),
     formatting.gofmt,
-    rustfmt,
+    formatting.rustfmt,
     formatting.black,
   },
 })
+
 
 -- Autopairs Setup
 require('nvim-autopairs').setup{}
